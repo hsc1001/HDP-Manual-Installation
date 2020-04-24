@@ -158,7 +158,7 @@ Execute the following command on all cluster nodes.
 
     #yum install hadoop hadoop-hdfs hadoop-libhdfs hadoop-yarn hadoop-mapreduce hadoop-client openssl
 
-### HDFS Service HDFS Service
+### HDFS Service 
 
         NameNode -  hchauhan-1.openstack.local
                  
@@ -351,7 +351,8 @@ Set the appropriate permissions:
     
  Modify the JAVA_HOME value in the hadoop-env.sh file:
 
-export JAVA_HOME=/usr/jdk64/jdk1.8.0_112/
+    export JAVA_HOME=/usr/jdk64/jdk1.8.0_112/
+
 Execute the following commands on the NameNode host machine:
 
     su - $HDFS_USER
@@ -386,3 +387,10 @@ Try copying a file into HDFS and listing that file:
     hdfs dfs -copyFromLocal /etc/passwd passwd
     hdfs dfs -ls
 Use the Namenode web UI and the Utilities menu to browse the file system.
+
+Verify the Namenode Process, verify the logs for Datanodes, Namenode and secondary Namenode. 
+
+## Yarn Service 
+
+
+
