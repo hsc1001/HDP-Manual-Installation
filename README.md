@@ -1,6 +1,6 @@
 # HDP-Manual-Installation-
 Guide for Manual Installation for Learners 
-Setup a 4 cluster in OpenStack https://172.26.132.10/project/instances/ 
+Setup a 4 cluster in OpenStack 
 Cluster Architecture and Host wise components :- 
 
 In this Lab exercise, we are going to install HDP services manually and test them all. 
