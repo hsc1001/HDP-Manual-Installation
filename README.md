@@ -212,6 +212,177 @@ At all nodes, execute the following commands:
     chown -R hdfs:hadoop /var/run/hadoop/hdfs;
     chmod -R 755 /var/run/hadoop/hdfs;
 
+Download the companion files from the below link which will be helpful in setting up the Hadoop configuration files. 
 
+    cd /root 
+    wget http://public-repo-1.hortonworks.com/HDP/tools/2.6.0.3/hdp_manual_install_rpm_helper_files-2.6.0.3.8.tar.gz
+    tar zxvf hdp_manual_install_rpm_helper_files-2.6.0.3.8.tar.gz
+    
+    [root@hchauhan-4 hdp_manual_install_rpm_helper_files-2.6.0.3.8]# ls -ltr
+        total 8
+        drwxr-xr-x.  2 hdfs users  74 Apr  3  2017 scripts
+        -rw-r--r--.  1 hdfs users 623 Apr  3  2017 readme.txt
+        drwxr-xr-x. 12 hdfs users 148 Apr  3  2017 configuration_files
+        -rw-r--r--.  1 hdfs users 154 Apr  3  2017 HDP-CHANGES.txt
+        [root@hchauhan-4 hdp_manual_install_rpm_helper_files-2.6.0.3.8]# cd configuration_files/
+        [root@hchauhan-4 configuration_files]# ls -ltr
+        total 4
+        drwxr-xr-x. 2 hdfs users   94 Apr  3  2017 zookeeper
+        drwxr-xr-x. 2 hdfs users   52 Apr  3  2017 webhcat
+        drwxr-xr-x. 2 hdfs users  138 Apr  3  2017 sqoop
+        drwxr-xr-x. 2 hdfs users   70 Apr  3  2017 pig
+        drwxr-xr-x. 2 hdfs users  150 Apr  3  2017 oozie
+        drwxr-xr-x. 4 hdfs users   36 Apr  3  2017 nagios
+        drwxr-xr-x. 2 hdfs users  127 Apr  3  2017 hive
+        drwxr-xr-x. 2 hdfs users  253 Apr  3  2017 hbase
+        drwxr-xr-x. 4 hdfs users   36 Apr  3  2017 ganglia
+        drwxr-xr-x. 2 hdfs users 4096 Apr  3  2017 core_hadoop
+        
+        [root@hchauhan-4 configuration_files]# cd core_hadoop/
+        [root@hchauhan-4 core_hadoop]# ls -ltr
+        total 84
+        -rw-r--r--. 1 hdfs users 4143 Apr  3  2017 yarn-site.xml
+        -rw-r--r--. 1 hdfs users 4340 Apr  3  2017 yarn-env.sh
+        -rw-r--r--. 1 hdfs users 4233 Apr  3  2017 mapred-site.xml
+        -rw-r--r--. 1 hdfs users  279 Apr  3  2017 mapred-queue-acls.xml
+        -rw-r--r--. 1 hdfs users 5734 Apr  3  2017 log4j.properties
+        -rwxr-xr-x. 1 hdfs users 2527 Apr  3  2017 health_check
+        -rw-r--r--. 1 hdfs users 4018 Apr  3  2017 hdfs-site.xml
+        -rwxr-xr-x. 1 hdfs users 5007 Apr  3  2017 hadoop-policy.xml
+        -rwxr-xr-x. 1 hdfs users 1421 Apr  3  2017 hadoop-metrics2.properties-GANGLIA
+        -rwxr-xr-x. 1 hdfs users 1515 Apr  3  2017 hadoop-metrics2.properties
+        -rw-r--r--. 1 hdfs users 5734 Apr  3  2017 hadoop-env.sh
+        -rw-r--r--. 1 hdfs users 2339 Apr  3  2017 core-site.xml
+        -rw-r--r--. 1 hdfs users  171 Apr  3  2017 container-executor.cfg
+        -rw-r--r--. 1 hdfs users 1020 Apr  3  2017 commons-logging.properties
+        -rw-r--r--. 1 hdfs users 1474 Apr  3  2017 capacity-scheduler.xml
 
+In the temporary directory, locate the following files and modify the properties based on your environment.
 
+Search for TODO in the files for the properties to replace. For further information, see "Define Environment Parameters" in this guide.
+
+Edit core-site.xml and modify the following properties:
+
+    <property>
+         <name>fs.defaultFS</name>
+         <value>hdfs://$namenode.full.hostname:8020</value>
+         <description>Enter your NameNode hostname</description>
+    </property>
+
+    <property>
+         <name>hdp.version</name>
+         <value>${hdp.version}</value>
+         <description>Replace with the actual HDP version</description>
+    </property>
+
+Edit hdfs-site.xml and modify the following properties:
+
+    <property>
+         <name>dfs.namenode.name.dir</name>
+         <value>/grid/hadoop/hdfs/nn,/grid1/hadoop/hdfs/nn</value>
+         <description>Comma-separated list of paths. Use the list of directories from $DFS_NAME_DIR. For example, /grid/hadoop/hdfs/nn,/grid1/hadoop/hdfs/nn.</description>
+    </property>
+
+    <property>
+         <name>dfs.datanode.data.dir</name>
+         <value>file:///grid/hadoop/hdfs/dn, file:///grid1/hadoop/hdfs/dn</value>
+         <description>Comma-separated list of paths. Use the list of directories from $DFS_DATA_DIR. For example, file:///grid/hadoop/hdfs/dn, file:///grid1/ hadoop/hdfs/dn.</description>
+    </property>
+
+    <property>
+         <name>dfs.namenode.http-address</name>
+         <value>$namenode.full.hostname:50070</value>
+         <description>Enter your NameNode hostname for http access.</description>
+    </property>
+
+    <property>
+         <name>dfs.namenode.secondary.http-address</name>
+         <value>$secondary.namenode.full.hostname:50090</value>
+         <description>Enter your Secondary NameNode hostname.</description>
+    </property>
+
+    <property>
+         <name>dfs.namenode.checkpoint.dir</name>
+         <value>/grid/hadoop/hdfs/snn,/grid1/hadoop/hdfs/snn,/grid2/hadoop/hdfs/snn</value>
+         <description>A comma-separated list of paths. Use the list of directories from $FS_CHECKPOINT_DIR. For example, /grid/hadoop/hdfs/snn,sbr/grid1/hadoop/hdfs/ snn,sbr/grid2/hadoop/hdfs/snn </description>
+    </property>
+
+    <property>
+         <name>dfs.namenode.checkpoint.edits.dir</name>
+         <value>/grid/hadoop/hdfs/snn,/grid1/hadoop/hdfs/snn,/grid2/hadoop/hdfs/snn</value>
+         <description>A comma-separated list of paths. Use the list of directories from $FS_CHECKPOINT_DIR. For example, /grid/hadoop/hdfs/snn,sbr/grid1/hadoop/hdfs/ snn,sbr/grid2/hadoop/hdfs/snn </description>
+    </property>
+
+    <property>
+         <name>dfs.namenode.rpc-address</name>
+         <value>namenode_host_name:8020>
+         <description>The RPC address that handles all clients requests.</description.>
+    </property>
+
+    <property>
+         <name>dfs.namenode.https-address</name>
+         <value>namenode_host_name:50470>
+         <description>The namenode secure http server address and port.</description.>
+    </property>
+
+ Append the following to /etc/profile:
+
+    touch $HADOOP_CONF_DIR/dfs.exclude
+    JAVA_HOME=<java_home_path>
+    export JAVA_HOME
+    HADOOP_CONF_DIR=/etc/hadoop/conf/
+    export HADOOP_CONF_DIR
+    export PATH=$PATH:$JAVA_HOME:$HADOOP_CONF_DIR
+    
+ On all hosts in your cluster, create the Hadoop configuration directory:
+
+    rm -rf $HADOOP_CONF_DIR
+    mkdir -p $HADOOP_CONF_DIR
+    where $HADOOP_CONF_DIR is the directory for storing the Hadoop configuration files. For example, /etc/hadoop/conf.
+
+Copy all the configuration files from a temporary folder created above to $HADOOP_CONF_DIR.
+
+Set the appropriate permissions:
+
+    chown -R $HDFS_USER:$HADOOP_GROUP $HADOOP_CONF_DIR/../
+    chmod -R 755 $HADOOP_CONF_DIR/../
+    
+### Start the HDFS services 
+    
+ Modify the JAVA_HOME value in the hadoop-env.sh file:
+
+export JAVA_HOME=/usr/jdk64/jdk1.8.0_112/
+Execute the following commands on the NameNode host machine:
+
+    su - $HDFS_USER
+    /usr/hdp/current/hadoop-hdfs-namenode/../hadoop/bin/hdfs namenode -format
+    /usr/hdp/current/hadoop-hdfs-namenode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start namenode
+
+Execute the following commands on the SecondaryNameNode:
+
+    su - $HDFS_USER
+    /usr/hdp/current/hadoop-hdfs-secondarynamenode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start secondarynamenode
+
+Execute the following commands on all DataNodes:
+
+    su - $HDFS_USER
+    /usr/hdp/current/hadoop-hdfs-datanode/../hadoop/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR start datanode
+    Where $HADOOP_CONF_DIR is the directory for storing the Hadoop configuration files. For example, /etc/hadoop/conf.
+
+Where $HDFS_USER is the HDFS user, for example, hdfs.   
+ 
+#### Smoke Test HDFS
+Determine if you can reach the NameNode server with your browser:
+
+http://$namenode.full.hostname:50070
+
+Create the hdfs user directory in HDFS:
+
+    su - $HDFS_USER
+    hdfs dfs -mkdir -p /user/hdfs
+Try copying a file into HDFS and listing that file:
+
+    su - $HDFS_USER
+    hdfs dfs -copyFromLocal /etc/passwd passwd
+    hdfs dfs -ls
+Use the Namenode web UI and the Utilities menu to browse the file system.
