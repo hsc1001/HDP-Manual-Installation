@@ -390,7 +390,169 @@ Use the Namenode web UI and the Utilities menu to browse the file system.
 
 Verify the Namenode Process, verify the logs for Datanodes, Namenode and secondary Namenode. 
 
-## Yarn Service 
+## Yarn and MapReduce Service 
+
+    Resource Manager - hchauhan-1.openstack.local
+    NodeManager - hchauhan-2.openstack.local
+                 hchauhan-3.openstack.local
+                 hchauhan-4.openstack.local
 
 
+#### Directories for RM and NM
+YARN NodeManager Local directories :- At each ResourceManager and all DataNodes
+
+    mkdir -p /hadoop/yarn/local;
+    chown -R yarn:hadoop /hadoop/yarn/local;
+    chmod -R 755 /hadoop/yarn/local;
+
+At each ResourceManager and all DataNodes, execute the following commands:
+
+    mkdir -p /hadoop/yarn/logs;
+    chown -R yarn:hadoop /hadoop/yarn/logs;
+    chmod -R 755 /hadoop/yarn/logs;
+
+
+
+At all nodes, execute the following commands:
+
+    mkdir -p /var/log/hadoop/yarn;
+    chown -R yarn:hadoop /var/log/hadoop/yarn;
+    chmod -R 755 /var/log/hadoop/yarn;
+
+At all nodes, execute the following commands:
+
+    mkdir -p /var/run/hadoop/yarn;
+    chown -R yarn:hadoop /var/run/hadoop/yarn;
+    chmod -R 755 /var/run/hadoop/yarn;
+
+JobHistory Server Logs
+
+    At all nodes, execute the following commands:
+    mkdir -p /var/log/hadoop/mapred;
+    chown -R mapred:hadoop /var/log/hadoop/mapred;
+    chmod -R 755 /var/log/hadoop/mapred;
+
+
+JobHistory Server Process ID
+
+    At all nodes, execute the following commands:
+    mkdir -p /var/run/hadoop/mapred;
+    chown -R mapred:hadoop /var/run/hadoop/mapred;
+    chmod -R 755 /var/run/hadoop/mapred;
+
+#### Configure YARN and MapReduce
+After you install Hadoop, modify your configs.
+As the HDFS user, for example 'hdfs', upload the MapReduce tarball to HDFS.
+
+    su - $HDFS_USER
+    hdfs dfs -mkdir -p /hdp/apps/<hdp_version>/mapreduce/
+    hdfs dfs -put /usr/hdp/current/hadoop-client/mapreduce.tar.gz /hdp/apps/<hdp_version>/mapreduce/
+    hdfs dfs -chown -R hdfs:hadoop /hdp
+    hdfs dfs -chmod -R 555 /hdp/apps/<hdp_version>/mapreduce
+    hdfs dfs -chmod 444 /hdp/apps/<hdp_version>/mapreduce/mapreduce.tar.gz Where $HDFS_USER is the HDFS user, for example hdfs, and <hdp_version> is the current HDP version, for example 2.6.0.0. 
+
+
+Copy mapred-site.xml from the companion files and make the following changes to mapred-site.xml:
+
+    Add: <property>
+         <name>mapreduce.admin.map.child.java.opts</name>
+         <value>-server -Djava.net.preferIPv4Stack=true -Dhdp.version=${hdp.version}</value>
+         <final>true</final>
+    </property>
+
+    Modify the following existing properties to include ${hdp.version}:  <property>
+         <name>mapreduce.admin.user.env</name>
+         <value>LD_LIBRARY_PATH=/usr/hdp/${hdp.version}/hadoop/lib/native:/usr/hdp/${hdp.version}/hadoop/lib/native/Linux-amd64-64</value>
+    </property>
+
+    <property>
+         <name>mapreduce.application.framework.path</name>
+         <value>/hdp/apps/${hdp.version}/mapreduce/mapreduce.tar.gz#mr-framework</value>
+    </property>
+
+    <property>
+    <name>mapreduce.application.classpath</name>
+    <value>$PWD/mr-framework/hadoop/share/hadoop/mapreduce/*:$PWD/mr-framework/hadoop/share/hadoop/mapreduce/lib/*:$PWD/mr-framework/hadoop/share/hadoop/common/*:$PWD/mr-framework/hadoop/share/hadoop/common/lib/*:$PWD/mr-framework/hadoop/share/hadoop/yarn/*:$PWD/mr-framework/hadoop/share/hadoop/yarn/lib/*:$PWD/mr-framework/hadoop/share/hadoop/hdfs/*:$PWD/mr-framework/hadoop/share/hadoop/hdfs/lib/*:/usr/hdp/${hdp.version}/hadoop/lib/hadoop-lzo-0.6.0.${hdp.version}.jar:/etc/hadoop/conf/secure</value>
+    </property>
+
+
+Copy yarn-site.xml from the companion files and modify:
+
+    <property>
+         <name>yarn.application.classpath</name>
+         <value>$HADOOP_CONF_DIR,/usr/hdp/${hdp.version}/hadoop-client/*,
+         /usr/hdp/${hdp.version}/hadoop-client/lib/*,
+         /usr/hdp/${hdp.version}/hadoop-hdfs-client/*,
+         /usr/hdp/${hdp.version}/hadoop-hdfs-client/lib/*,
+         /usr/hdp/${hdp.version}/hadoop-yarn-client/*,
+         /usr/hdp/${hdp.version}/hadoop-yarn-client/lib/*</value>
+    </property>  
+
+Start YARN
+
+As $YARN_USER, run the following command from the ResourceManager server:
+
+    su -l yarn -c "/usr/hdp/current/hadoop-yarn-resourcemanager/sbin/yarn-daemon.sh --config /etc/hadoop/conf start resourcemanager" 
+As $YARN_User, run the following command from all NodeManager nodes:
+
+    su -l yarn -c "/usr/hdp/current/hadoop-yarn-nodemanager/sbin/yarn-daemon.sh --config /etc/hadoop/conf start nodemanager"
+
+
+ Start MapReduce JobHistory Server
+
+    Change permissions on the container-executor file. 
+    chown -R root:hadoop /usr/hdp/current/hadoop-yarn*/bin/container-executor
+    chmod -R 6050 /usr/hdp/current/hadoop-yarn*/bin/container-executor
+
+Execute these commands from the JobHistory server to set up directories on HDFS: su $HDFS_USER
+
+    hdfs dfs -mkdir -p /mr-history/tmp
+    hdfs dfs -mkdir -p /mr-history/done
+
+    hdfs dfs -chmod 1777 /mr-history
+    hdfs dfs -chmod 1777 /mr-history/tmp
+    hdfs dfs -chmod 1770 /mr-history/done
+
+    hdfs dfs -chown $MAPRED_USER:$MAPRED_USER_GROUP /mr-history
+    hdfs dfs -chown $MAPRED_USER:$MAPRED_USER_GROUP /mr-history/tmp
+    hdfs dfs -chown $MAPRED_USER:$MAPRED_USER_GROUP /mr-history/done
+
+    Where
+        $MAPRED_USER : mapred
+        $MAPRED_USER_GROUP: mapred or hadoop
+
+    hdfs dfs -mkdir -p /app-logs
+    hdfs dfs -chmod 1777 /app-logs
+    hdfs dfs -chown $YARN_USER:$HADOOP_GROUP /app-logs
+
+    Where
+    $YARN_USER : yarn
+    $HADOOP_GROUP: hadoop 
+Run the following command from the JobHistory server: 
+    
+    su -l $YARN_USER -c "/usr/hdp/current/hadoop-mapreduce-historyserver/sbin/mr-jobhistory-daemon.sh --config /etc/hadoop/conf start historyserver"
+
+
+#### Smoke Test MapReduce
+
+Browse to the ResourceManager: http://$resourcemanager.full.hostname:8088/ 
+
+Create a $CLIENT_USER in all of the nodes and add it to the users group. 
+  
+    useradd client
+    usermod -a -G users client 
+
+As the HDFS user, create a /user/$CLIENT_USER.
+
+    sudo su - $HDFS_USER
+    hdfs dfs -mkdir /user/$CLIENT_USER
+    hdfs dfs -chown $CLIENT_USER:$CLIENT_USER /user/$CLIENT_USER
+    hdfs dfs -chmod -R 755 /user/$CLIENT_USER 
+Run the smoke test as the $CLIENT_USER. Using Terasort, sort 10GB of data.
+
+    su - $CLIENT_USER
+    /usr/hdp/current/hadoop-client/bin/hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples-*.jar teragen 10000 tmp/teragenout
+    /usr/hdp/current/hadoop-client/bin/hadoop jar /usr/hdp/current/hadoop-mapreduce-client/hadoop-mapreduce-examples-*.jar terasort tmp/teragenout tmp/terasortout 
+
+Test whether you are able to submit the job succesfully or not, Please troublesshoot the error which you are getting. 
 
