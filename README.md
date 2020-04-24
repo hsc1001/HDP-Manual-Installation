@@ -8,8 +8,8 @@ In this Lab exercise, we are going to install HDP services manually and test the
 I have 4 nodes from the support Lab i.e. 
 
     hchauhan-1.openstack.local
-		hchauhan-2.openstack.local
-		hchauhan-3.openstack.local
+    hchauhan-2.openstack.local
+    hchauhan-3.openstack.local
     hchauhan-4.openstack.local
     
     
@@ -40,7 +40,4 @@ I have 4 nodes from the support Lab i.e.
 Now we are going to start service wise to install packages and create the directories and will test each service. 
 
 ## Zookeeper Service
-We are going to have the zookeeper services on 3 nodes of the cluster.
-        hchauhan-1.openstack.local
-        # hchauhan-2.openstack.local
-        # hchauhan-3.openstack.local
+We are going to have the zookeeper services on 3 nodes of the cluster
