@@ -48,10 +48,11 @@ We are going to have the zookeeper services on 3 nodes of the cluster
     hchauhan-3.openstack.local
  
 ### Zookeeper Directories 
- ZooKeeper stores data - /hadoop/zookeeper/data
- Zookeeper Conf Directory - /etc/hadoop/conf 
- ZooKeeper logs - /var/log/zookeeper
- PID Zookeeper Directory - /var/run/zookeeper
+ 
+    ZooKeeper stores data - /hadoop/zookeeper/data
+    Zookeeper Conf Directory - /etc/hadoop/conf 
+    ZooKeeper logs - /var/log/zookeeper
+    PID Zookeeper Directory - /var/run/zookeeper
  
  #### Installing Apache ZooKeeper
 
@@ -140,4 +141,77 @@ Command to verify the zookeeper process on all nodes
     # ps -ef | grep zookeeper
     
 Check whether the logs are getting updates and run directory have the zookeeper pid. 
+
+    cd /usr/hdp/current/zookeeper-client/bin/ 
+    ./zkCli.sh
+The above steps will start  the Zookeeper command line interface through which we can interact with Zookeeper. Read through the logs printed out to the console. Create the znode using the below command 
+ 
+    create -e /zk101en “ZKEnTest”
+
+Ensure that the znode is created successfully by listing it. Next, exit out of zkCli and log back in. Once logged in, try to list the newly created znode - /zk101en. If not then try to find out why?
+
+## Installing HDFS, YARN, and MapReduce
+
+Install the Hadoop Packages
+
+Execute the following command on all cluster nodes.
+
+    #yum install hadoop hadoop-hdfs hadoop-libhdfs hadoop-yarn hadoop-mapreduce hadoop-client openssl
+
+### HDFS Service HDFS Service
+
+        NameNode -  hchauhan-1.openstack.local
+                 
+        Secondary NameNode - hchauhan-2.openstack.local
+        
+        Journal Node    - hchauhan-1.openstack.local
+                        - hchauhan-2.openstack.local
+                        - hchauhan-3.openstack.local
+                        
+        ZKFC            - hchauhan-1.openstack.local
+                        - hchauhan-2.openstack.local
+                        
+        Datanode - hchauhan-1.openstack.local
+                   hchauhan-2.openstack.local
+                   hchauhan-3.openstack.local
+                   hchauhan-4.openstack.local
+
+
+Use the following instructions to create appropriate directories:
+Create the NameNode Directories
+
+On the node that hosts the NameNode service, execute the following commands:
+
+    mkdir -p /hadoop/hdfs/namenode;
+    chown -R hdfs:hadoop /hadoop/hdfs/namenode;
+    chmod -R 755 /hadoop/hdfs/namenode;
+
+Create the SecondaryNameNode Directories
+
+    mkdir -p /hadoop/hdfs/secondarynamenode;
+    chown -R hdfs:hadoop /hadoop/hdfs/secondarynamenode;
+    chmod -R 755 /hadoop/hdfs/secondarynamenode;
+
+Create DataNode directories
+
+    mkdir -p /hadoop/hdfs/data;
+    chown -R hdfs:hadoop /hadoop/hdfs/data;
+    chmod -R 750 /hadoop/hdfs/data;
+
+HDFS Log Directories 
+At all nodes, execute the following commands:
+
+    mkdir -p /var/log/hadoop/hdfs;
+    chown -R hdfs:hadoop /var/log/hadoop/hdfs;
+    chmod -R 755 /var/log/hadoop/hdfs;
+
+ HDFS Process
+At all nodes, execute the following commands:
+
+    mkdir -p /var/run/hadoop/hdfs;
+    chown -R hdfs:hadoop /var/run/hadoop/hdfs;
+    chmod -R 755 /var/run/hadoop/hdfs;
+
+
+
 
