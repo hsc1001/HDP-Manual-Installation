@@ -639,3 +639,8 @@ From a terminal, enter:
         <role>NAMENODE</role>
         <url>hdfs://hchauhan-1.openstack.local:8020</url>
     </service>
+   Try running the curl call to get the Listing from WeBHDFS. 
+   
+    curl -k -u guest:guest-password -X GET "https://$gateway_host:8443/gateway/sandbox/webhdfs/v1/?op=LISTSTATUS"
+    
+    
