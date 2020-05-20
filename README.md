@@ -556,3 +556,86 @@ Run the smoke test as the $CLIENT_USER. Using Terasort, sort 10GB of data.
 
 Test whether you are able to submit the job succesfully or not, Please troublesshoot the error which you are getting. 
 
+
+## Install HBase 
+    Hbase Master :          hchauhan-1.openstack.local
+    Hbase RegionServer:     hchauhan-2.openstack.local
+    
+#### Install the packges on the nodes. 
+    [root@hchauhan-1 ~]# yum install hbase
+    [root@hchauhan-2 ~]# yum install hbase
+    
+#### Create the Directories for Logs and PID on Master and RegionServer 
+    [root@hchauhan-1 ~]# mkdir -p /var/log/hbase
+    [root@hchauhan-1 ~]# chown -R hbase:hadoop /var/log/hbase
+    [root@hchauhan-1 ~]# chmod -R 755 /var/log/hbase
+    [root@hchauhan-1 ~]# mkdir -p  /var/run/hbase
+    [root@hchauhan-1 ~]# chown -R hbase:hadoop /var/run/hbase
+    [root@hchauhan-1 ~]# chmod -R 755 /var/run/hbase
+    
+#### Set Up the Configuration Files
+    Copy hbase-site.xml and other files from the companion files under /hdp_manual_install_rpm_helper_files-2.6.0.3.8/configuration_files/hbase and make the following changes to hbase-site.xml:
+    
+   Edit hbase-site.xml and modify the following properties:
+
+    <property>
+          <name>hbase.rootdir</name>
+          <value>hdfs://$hbase.namenode.full.hostname:8020/apps/hbase/data</value>
+          <description>Enter the HBase NameNode server hostname</description>
+     </property>
+
+    <property>
+          <name>hbase.zookeeper.quorum</name>
+          <value>$zk.server1.full.hostname,$zk.server2.full.hostname,$zk.server3.full.hostname</value>
+          <description>Comma separated list of ZooKeeper servers (match to what is specified in zoo.cfg but without portnumbers)</description>
+    </property>
+    
+ Move the files to the Regionserver and the Hbase Master node. 
+ 
+#### Start the Hbase Master and RegionServer and Test.
+
+
+Execute the following command from the HBase Master node:
+
+    su -l hbase -c "/usr/hdp/current/hbase-master/bin/hbase-daemon.sh start master; sleep 25"
+
+Execute the following command from each HBase Region Server node:
+
+    su -l hbase -c "/usr/hdp/current/hbase-regionserver/bin/hbase-daemon.sh start regionserver"
+
+#### Smoke Test HBase.
+
+From a terminal, enter:
+
+    su - hbase
+    hbase shell
+    In the HBase shell, enter the following command:
+
+    status 'detailed'
+    
+## Install Knox 
+ 
+     Knox Gateway :          hchauhan-4.openstack.local
+     
+   #### Install Knox 
+    #yum install knox -y
+   Setup the Knox master secret 
+       
+       [knox@hchauhan-4 ~]$ /usr/hdp/current/knox-server/bin/gateway.sh setup
+      Enter master secret:
+      Enter master secret again:
+   Start the Knox Gateway and Demo ldap 
+      
+      [root@hchauhan-4 hbase]# su -l knox -c "/usr/hdp/current/knox-server/bin/gateway.sh start"
+    Starting Gateway succeeded with PID 26341.
+    [root@hchauhan-4 hbase]# su -l knox -c "/usr/hdp/current/knox-server/bin/ldap.sh start"
+    Starting LDAP succeeded with PID 26426.
+    [root@hchauhan-4 hbase]#
+    
+   #### Test Knox 
+   Edit the file /etc/knox/conf/topologies/sandbox.xml 
+    
+    <service>
+        <role>NAMENODE</role>
+        <url>hdfs://hchauhan-1.openstack.local:8020</url>
+    </service>
