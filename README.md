@@ -644,3 +644,5 @@ From a terminal, enter:
     curl -k -u guest:guest-password -X GET "https://$gateway_host:8443/gateway/sandbox/webhdfs/v1/?op=LISTSTATUS"
     
     
+# Task (Just one)
+## Install Ranger and Hive, enable Ranger PLugin for Services.
