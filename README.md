@@ -645,4 +645,4 @@ From a terminal, enter:
     
     
 # Task (Just one)
-## Install Ranger and Hive, enable Ranger PLugin for Services.
+## Install Ranger and Hive, enable Ranger Plugin for Services.
