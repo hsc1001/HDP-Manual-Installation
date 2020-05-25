@@ -646,3 +646,4 @@ From a terminal, enter:
     
 # Task (Just one)
 ## Install Ranger and Hive, enable Ranger Plugin for Services.
+#### Ref :- https://docs.cloudera.com/HDPDocuments/HDP2/HDP-2.6.5/bk_command-line-installation/content/ch_getting_ready_chapter.html
