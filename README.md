@@ -1,4 +1,4 @@
-# HDP-Manual-Installation-
+# HDP-Manual-Installation
 Guide for Manual Installation for Learners 
 Setup a 4 cluster in OpenStack 
 Cluster Architecture and Host wise components :- 
