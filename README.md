@@ -23,18 +23,18 @@ I have 4 nodes from the support Lab i.e.
     # wget -nv http://public-repo-1.hortonworks.com/HDP/centos7/2.x/updates/2.6.3.0/hdp.repo
 
 ### Creating System Users and Groups
-    #groupadd hadoop
-    #useradd -G hadoop hdfs
-    #useradd -G hadoop yarn
-    #useradd -G hadoop mapred
-    #useradd -G hadoop hive
-    #useradd -G hadoop hcat
-    #useradd -G hadoop knox
-    #useradd -G hadoop oozie
-    #useradd -G hadoop zookeeper
-    #useradd -G hadoop sqoop
-    #useradd -G hadoop falcon
-    #useradd -G hadoop hbase
+    groupadd hadoop
+    useradd -G hadoop hdfs
+    useradd -G hadoop yarn
+    useradd -G hadoop mapred
+    useradd -G hadoop hive
+    useradd -G hadoop hcat
+    useradd -G hadoop knox
+    useradd -G hadoop oozie
+    useradd -G hadoop zookeeper
+    useradd -G hadoop sqoop
+    useradd -G hadoop falcon
+    useradd -G hadoop hbase
 
 
 Now we are going to start service wise to install packages and create the directories and will test each service. 
