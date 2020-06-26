@@ -122,7 +122,7 @@ Contents for the important files and Directories
     export SERVER_JVMFLAGS=-Xmx1024m
     export ZOOPIDFILE=/var/run/zookeeper/zookeeper_server.pid
     export JAVA=$JAVA_HOME/bin/java
-    CLASSPATH=$CLASSPATH:$ZOOKEEPER_HOME/*
+    export CLASSPATH=$CLASSPATH:$ZOOKEEPER_HOME/*
     
     
 ### Start the zookeeper services on hosts which are identified to run zookeeper 
