@@ -651,6 +651,6 @@ From a terminal, enter:
 
 
 
-https://user-images.githubusercontent.com/32457931/182353895-23c2a06b-30ac-4d1e-9557-f9d113dd04c6.mp4
+
 
 
